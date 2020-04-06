@@ -27,26 +27,42 @@
                 if(e.code === 'Tab') {
                     e.preventDefault();
                     area.value += '   ';
-                    document.querySelectorAll('.key')[14].classList.add('key--press');
+                }
+                if(e.key === 'Alt') {
+                    e.preventDefault();              
+                }
+                if(e.code === 'Meta') {
+                    e.preventDefault();
                 }
                 console.log(e);
-                document.querySelectorAll('.key').forEach(key => {
-                    if (key.innerText === e.key) {
-                        key.classList.add('key--press');
-                    }
-                });
-                /* if(!(document.activeElement == area)) { 
-                    area.value += e.key;                
-                } */
-               // this.highlightButton(e);
+                this.addButtonHighlight(e);
             });
 
             document.addEventListener('keyup', (e) => {
-                document.querySelectorAll('.key').forEach(key => {
-                    if (key.innerText === e.key) {
-                        key.classList.remove('key--press');
-                    }
-                });
+                this.removeButtonHighlight(e);
+            });
+
+            document.querySelector('.keyboard').addEventListener('mousedown', (e) => {
+                
+                if (e.target.classList.contains('key') && !e.target.classList.contains('key--special')) {
+                    document.querySelector('#area').value += e.target.innerText;
+                }
+            });
+        }
+
+        addButtonHighlight(e) {
+            document.querySelectorAll('.key').forEach(key => {
+                if (key.getAttribute('data') === e.code) {
+                    key.classList.add('key--press');
+                }
+            });
+        }
+
+        removeButtonHighlight(e) {
+            document.querySelectorAll('.key').forEach(key => {
+                if (key.getAttribute('data') === e.code) {
+                    key.classList.remove('key--press');
+                }
             });
         }
     
@@ -90,6 +106,9 @@
             document.querySelectorAll('.key').forEach((key,i,arr) => {
                 if (key.innerText === 'Backspace' || key.innerText === 'Enter' || key.innerText === '') key.classList.add('key--wide');
                 if((key.innerText === 'Shift' && arr[i - 1].innerText === 'Enter') || key.innerText === 'Enter') key.classList.add('key--shift');
+                if (key.innerText === 'Backspace' || key.innerText === 'Tab' || key.innerText === 'Del' || key.innerText === 'Enter' || key.innerText === 'Shift' || key.innerText === 'Ctrl' || key.innerText === 'Win' || key.innerText === 'Alt' || key.innerText === 'Caps Lock' || key.getAttribute('data').includes('Arrow')) {
+                    key.classList.add('key--special');
+                }
             });
         }
        

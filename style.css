@@ -3,6 +3,11 @@ html {
 }
 body {
     background-color: #2f3a31;
+    position: relative;
+    pointer-events: none;
+}
+.poiner--on {
+    pointer-events: auto;
 }
 .container {
     position: relative;
@@ -66,4 +71,27 @@ body {
 }
 p {
     color: #fff;
+}
+
+.modal {
+    padding: 30px;
+    position: absolute;
+    margin-top: 25vh;
+    margin-left: 30vw;
+    max-width: 50vw;
+    background-color: blanchedalmond;
+    font-size: 3rem;
+    color: #000;
+    border-radius: 10px;
+    text-align: center;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: blur(4px);
+    overflow-y: hidden;
 }

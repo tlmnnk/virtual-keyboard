@@ -4,6 +4,7 @@
             this.area = null;
             this.lang = 'eng';
             this.capslock = false;
+            this.indicator = true;
             this.keyCodes = [["Backquote", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9", "Digit0", "Minus", "Equal", "Backspace"], ["Tab", "KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI", "KeyO", "KeyP", "BracketLeft", "BracketRight", "IntlBackslash", "Delete"], ["CapsLock", "KeyA", "KeyS", "KeyD", "KeyF", "KeyG", "KeyH", "KeyJ", "KeyK", "KeyL", "Semicolon", "Quote", "Enter"], ["ShiftLeft", "KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM", "Comma", "Period", "Slash", "ArrowUp", "ShiftRight"], ["ControlLeft", "MetaLeft", "AltLeft", "Space", "AltRight", "ControlRight", "ArrowLeft", "ArrowDown", "ArrowRight"]];
 
             this.engKeys = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'], ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\','Del'], ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'], ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
@@ -28,6 +29,17 @@
         initEventListeners() {
             document.addEventListener('keydown', (e) => {
                 //console.log(e);
+                if (this.indicator) {
+                    if (/[а-яa-z]/i.test(e.key) && e.key.length === 1) {
+                        document.querySelector('.container').classList.remove('overlay');
+                        document.querySelector('.modal').style.display = 'none';
+                        document.querySelector('body').classList.add('poiner--on');
+                    this.area.disabled = false;
+                    this.checkSystemKeyboardLayout(e);
+                    this.checkSystemKeyboardCapsLock(e);
+                    this.indicator = false;
+                }
+            } else {
                 area.focus();
                 if(e.code === 'Tab') {
                     e.preventDefault();
@@ -36,10 +48,11 @@
                 if(e.key === 'Alt' || e.code === 'Meta') {
                     e.preventDefault();              
                 }
-                //console.log(e.getModifierState('CapsLock'));
                 this.addButtonHighlight(e);
                 this.languageSwitch(e);
                 this.capslockHandler(e);
+            }
+                
             });
 
             document.addEventListener('keyup', (e) => {
@@ -72,23 +85,22 @@
             if (e.key === 'CapsLock') {
                 this.capslock ? this.capslock = false : this.capslock = true;
                 //говнокод конечно....
-                if(this.lang === 'rus') {
-                    if (this.capslock) {
+                if(this.lang === 'rus' && this.capslock) {
                         this.changeKeyboardLang(this.rusKeysUp);
                         this.lang = 'rus';
-                    } else {
+                }
+                if (this.lang === 'rus' && !this.capslock) {
                         this.changeKeyboardLang(this.rusKeys);
                         this.lang = 'rus';
                     }
-                } else {
-                    if (this.capslock) {
-                        this.changeKeyboardLang(this.engKeysUp);
+                if (this.lang === 'eng' && this.capslock) {
+                    this.changeKeyboardLang(this.engKeysUp);
                         this.lang = 'eng';
-                    } else {
+                }
+                if (this.lang === 'eng' && !this.capslock) {
                         this.changeKeyboardLang(this.engKeys);
                         this.lang = 'eng';
                     }
-                    } 
                 }
         }
         
@@ -231,6 +243,17 @@
             this.renderArea();
             this.renderKeyboard();
             this.renderInfo();
+            this.renderModal();
+        }
+
+        renderModal() {
+            const modal = document.createElement('div');
+            modal.innerText = 'Пожалуйста, введите любую букву на своей клавиатуре\nЭто необходимо для опередения вашей раскладки';
+            modal.classList.add('modal');
+            document.querySelector('body').appendChild(modal);
+            //document.querySelector('body').classList.add('')
+            document.querySelector('.container').classList.add('overlay');
+            
         }
 
         renderArea() {
@@ -241,6 +264,7 @@
             this.area.setAttribute('id', 'area');
             this.area.setAttribute('name', 'area');
             this.area.setAttribute('placeholder', 'ааааа не успеваю "( я доделаю точно, перепроверте чуть позже плиз, если что tg @nextstopmars');
+            this.area.disabled = true;
             container.appendChild(this.area);
         }
 
@@ -285,10 +309,9 @@
             this.lang === 'eng' ?  this.lang = 'rus' : this.lang = 'eng';
         }
         checkSystemKeyboardLayout(e) {
-            console.log('Keyboard layout is russian ' + /[а-я]/i.test(e.key));
-            if(/[а-я]/i.test(e.key)) {
-                this.changeKeyboardLang(this.rusKeys);
-                //this.lang = 'rus';
+
+            {
+                if(/[а-я]/i.test(e.key))  this.changeKeyboardLang(this.rusKeys);
             }
         }
         checkSystemKeyboardCapsLock(e) {
@@ -324,14 +347,6 @@
         const keyboard = new Keyboard();
         keyboard.init();
         //Костыль чтобы определить какая раскладка в системe
-        let indicator = true;
-        document.addEventListener('keydown', e => {
-            if (indicator) {
-                keyboard.checkSystemKeyboardLayout(e);
-                keyboard.checkSystemKeyboardCapsLock(e);
-                indicator = false;
-            }
-            return;
-        });
+        
     });
 }) ();

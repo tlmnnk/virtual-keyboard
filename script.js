@@ -248,7 +248,7 @@
 
         renderModal() {
             const modal = document.createElement('div');
-            modal.innerText = 'Пожалуйста, введите любую букву на своей клавиатуре\nЭто необходимо для опередения вашей раскладки';
+            modal.innerText = 'Пожалуйста, введите любую букву на своей клавиатуре\nЭто необходимо для опредения вашей раскладки';
             modal.classList.add('modal');
             document.querySelector('body').appendChild(modal);
             //document.querySelector('body').classList.add('')

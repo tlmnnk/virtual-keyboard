@@ -64,3 +64,6 @@ body {
 .key:hover {
     background-color: black;
 }
+p {
+    color: #fff;
+}

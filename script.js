@@ -7,7 +7,7 @@
 
             this.engKeys = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'], ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\','Del'], ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'], ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
-            this.rusKeys = [['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspase'], ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'], ['Caps Lock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'], ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
+            this.rusKeys = [['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'], ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'], ['Caps Lock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'], ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
             this.engKeysUp = [['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Backspase'], ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '|', 'Del'], ['Caps Lock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', 'Enter'], ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 'Shift', '↑', 'lang'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
@@ -26,9 +26,8 @@
         }
         initEventListeners() {
             document.addEventListener('keydown', (e) => {
-                console.log(e);
+                //console.log(e);
                 area.focus();
-                console.log(/[а-я]/i.test(this.area.value));
                 if(e.code === 'Tab') {
                     e.preventDefault();
                     this.area.setRangeText('    ', this.area.selectionStart, this.area.selectionEnd, 'end');
@@ -37,7 +36,6 @@
                     e.preventDefault();              
                 }
                 //console.log(e.getModifierState('CapsLock'));
-                this.preventSystemLangChange(e);
                 this.addButtonHighlight(e);
                 this.languageSwitch(e);
             });
@@ -69,10 +67,8 @@
         }
 
         languageSwitch(e) {
-            console.log(e.altKey);
-            if((e.key === 'Control' && !!e.altKey) || (e.key === 'Alt' && !!e.ctrlKey))
+            if((e.key === 'Shift' && !!e.altKey) || (e.key === 'Alt' && !!e.shiftKey))
             {
-                console.log('language switch!....')
                 this.changeKeyboardLang(this.lang === 'eng' ?  this.rusKeys : this.engKeys );
             }
         }
@@ -190,6 +186,7 @@
         renderBody() {
             this.renderArea();
             this.renderKeyboard();
+            this.renderInfo();
         }
 
         renderArea() {
@@ -220,6 +217,14 @@
             document.querySelector('.container').appendChild(keyboard);
             this.addExtraKeyClasses();
        }
+       renderInfo() {
+           const langChangeInfo = document.createElement('p');
+           langChangeInfo.innerText = 'Смена языка - Shift + Alt';
+           const osInfo = document.createElement('p');
+           osInfo.innerText = 'Сделано в Windows OS';
+           document.querySelector('.container').appendChild(langChangeInfo);
+           document.querySelector('.container').appendChild(osInfo);
+       }
 
        renderKeyboardKey(key, data) {
             return `<span class="key" data="${data}">${key}</span>`;
@@ -233,13 +238,12 @@
                    keyElementsArray[i][j].innerText = key;
                 });
             });
-            console.log(keyElementsArray);
             this.lang === 'eng' ?  this.lang = 'rus' : this.lang = 'eng';
         }
-        preventSystemLangChange(e) {
-            console.log('prevent goes ...')
-            if((e.key === 'Shift' && !!e.altKey) || (e.key === 'Alt' && !!e.shiftKey)) {
-                e.preventDefault();
+        checkSystemKeyboardLayout(e) {
+            console.log('sytem language is russian ' + /[а-я]/i.test(e.key));
+            if(/[а-я]/i.test(e.key)) {
+                this.changeKeyboardLang(this.rusKeys);
             }
         }
         addExtraKeyClasses() {
@@ -266,6 +270,16 @@
     }
     
     document.addEventListener('DOMContentLoaded', (e) => {
-        new Keyboard().init();
+        const keyboard = new Keyboard();
+        keyboard.init();
+        //Костыль чтобы определить какая раскладка в системe
+        let indicator = true;
+        document.addEventListener('keydown', e => {
+            if (indicator) {
+                keyboard.checkSystemKeyboardLayout(e);
+                indicator = false;
+            }
+            return;
+        });
     });
 }) ();

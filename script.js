@@ -3,17 +3,18 @@
         constructor() {
             this.area = null;
             this.lang = 'eng';
+            this.capslock = false;
             this.keyCodes = [["Backquote", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9", "Digit0", "Minus", "Equal", "Backspace"], ["Tab", "KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI", "KeyO", "KeyP", "BracketLeft", "BracketRight", "IntlBackslash", "Delete"], ["CapsLock", "KeyA", "KeyS", "KeyD", "KeyF", "KeyG", "KeyH", "KeyJ", "KeyK", "KeyL", "Semicolon", "Quote", "Enter"], ["ShiftLeft", "KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM", "Comma", "Period", "Slash", "ArrowUp", "ShiftRight"], ["ControlLeft", "MetaLeft", "AltLeft", "Space", "AltRight", "ControlRight", "ArrowLeft", "ArrowDown", "ArrowRight"]];
 
             this.engKeys = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'], ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\','Del'], ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'], ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
             this.rusKeys = [['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'], ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'], ['Caps Lock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'], ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
-            this.engKeysUp = [['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Backspase'], ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '|', 'Del'], ['Caps Lock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', 'Enter'], ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 'Shift', '↑', 'lang'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
+            this.engKeysUp = [['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Backspace'], ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '|', 'Del'], ['Caps Lock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', 'Enter'], ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
             
 
-            this.rusKeysUp = [['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Backspase'], ['Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', '/', 'Del'], ['Caps Lock', 'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', 'Enter'], ['Shift', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'ь', 'б', 'ю', '.', 'Shift', '↑', 'lang'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
+            this.rusKeysUp = [['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Backspace'], ['Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', '/', 'Del'], ['Caps Lock', 'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', 'Enter'], ['Shift', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'ь', 'б', 'ю', '.', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
             this.specKey = ['Tab', 'Backspace', 'Capslock', 'Shift', 'Enter', 'Control', 'Alt', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Delete'];
 
@@ -38,6 +39,7 @@
                 //console.log(e.getModifierState('CapsLock'));
                 this.addButtonHighlight(e);
                 this.languageSwitch(e);
+                this.capslockHandler(e);
             });
 
             document.addEventListener('keyup', (e) => {
@@ -65,11 +67,53 @@
                 document.querySelector('#area').focus();
             });
         }
+        capslockHandler(e) {
+            console.log(e);
+            if (e.key === 'CapsLock') {
+                this.capslock ? this.capslock = false : this.capslock = true;
+                //говнокод конечно....
+                if(this.lang === 'rus') {
+                    if (this.capslock) {
+                        this.changeKeyboardLang(this.rusKeysUp);
+                        this.lang = 'rus';
+                    } else {
+                        this.changeKeyboardLang(this.rusKeys);
+                        this.lang = 'rus';
+                    }
+                } else {
+                    if (this.capslock) {
+                        this.changeKeyboardLang(this.engKeysUp);
+                        this.lang = 'eng';
+                    } else {
+                        this.changeKeyboardLang(this.engKeys);
+                        this.lang = 'eng';
+                    }
+                    } 
+                }
+        }
+        
 
         languageSwitch(e) {
             if((e.key === 'Shift' && !!e.altKey) || (e.key === 'Alt' && !!e.shiftKey))
             {
                 this.changeKeyboardLang(this.lang === 'eng' ?  this.rusKeys : this.engKeys );
+            if (this.lang === 'rus') {
+                if (this.capslock) {
+                    this.changeKeyboardLang(this.rusKeysUp);
+                    this.lang = 'rus';
+                } else {
+                    this.changeKeyboardLang(this.rusKeys);
+                    this.lang = 'rus';
+                }
+            } else {
+                if (this.capslock) {
+                    this.changeKeyboardLang(this.engKeysUp);
+                    this.lang = 'eng';
+                } else {
+                    this.changeKeyboardLang(this.engKeys);
+                    this.lang = 'eng';
+                    }
+                }
             }
         }
 
@@ -241,9 +285,16 @@
             this.lang === 'eng' ?  this.lang = 'rus' : this.lang = 'eng';
         }
         checkSystemKeyboardLayout(e) {
-            console.log('sytem language is russian ' + /[а-я]/i.test(e.key));
+            console.log('Keyboard layout is russian ' + /[а-я]/i.test(e.key));
             if(/[а-я]/i.test(e.key)) {
                 this.changeKeyboardLang(this.rusKeys);
+                //this.lang = 'rus';
+            }
+        }
+        checkSystemKeyboardCapsLock(e) {
+            if (/[А-ЯA-Z]/.test(e.key)) {
+                this.changeKeyboardLang(this.lang === 'rus' ? this.rusKeysUp : this.engKeysUp);
+                this.capslock = true;
             }
         }
         addExtraKeyClasses() {
@@ -277,6 +328,7 @@
         document.addEventListener('keydown', e => {
             if (indicator) {
                 keyboard.checkSystemKeyboardLayout(e);
+                keyboard.checkSystemKeyboardCapsLock(e);
                 indicator = false;
             }
             return;

@@ -2,12 +2,16 @@
     class Keyboard {
         constructor() {
             this.area = null;
+            this.lang = 'eng';
             this.keyCodes = [["Backquote", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9", "Digit0", "Minus", "Equal", "Backspace"], ["Tab", "KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI", "KeyO", "KeyP", "BracketLeft", "BracketRight", "IntlBackslash", "Delete"], ["CapsLock", "KeyA", "KeyS", "KeyD", "KeyF", "KeyG", "KeyH", "KeyJ", "KeyK", "KeyL", "Semicolon", "Quote", "Enter"], ["ShiftLeft", "KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM", "Comma", "Period", "Slash", "ArrowUp", "ShiftRight"], ["ControlLeft", "MetaLeft", "AltLeft", "Space", "AltRight", "ControlRight", "ArrowLeft", "ArrowDown", "ArrowRight"]];
 
             this.engKeys = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'], ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\','Del'], ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'], ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
+
+            this.rusKeys = [['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspase'], ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'], ['Caps Lock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'], ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '↑', 'Shift'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
+
             this.engKeysUp = [['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Backspase'], ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '|', 'Del'], ['Caps Lock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', 'Enter'], ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 'Shift', '↑', 'lang'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
-            this.rusKeys = [['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspase'], ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'], ['Caps Lock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'], ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', 'Shift', '↑', 'lang'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
+            
 
             this.rusKeysUp = [['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Backspase'], ['Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', '/', 'Del'], ['Caps Lock', 'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', 'Enter'], ['Shift', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'ь', 'б', 'ю', '.', 'Shift', '↑', 'lang'], ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '←', '↓', '→']];
 
@@ -27,18 +31,19 @@
                 console.log(/[а-я]/i.test(this.area.value));
                 if(e.code === 'Tab') {
                     e.preventDefault();
-                    this.area.value += '   ';
+                    this.area.setRangeText('    ', this.area.selectionStart, this.area.selectionEnd, 'end');
                 }
                 if(e.key === 'Alt' || e.code === 'Meta') {
                     e.preventDefault();              
                 }
                 //console.log(e.getModifierState('CapsLock'));
+                this.preventSystemLangChange(e);
                 this.addButtonHighlight(e);
+                this.languageSwitch(e);
             });
 
             document.addEventListener('keyup', (e) => {
                 this.removeButtonHighlight(e);
-                console.log(e);
             });
 
             document.querySelector('.keyboard').addEventListener('mousedown', (e) => {
@@ -47,9 +52,7 @@
                     if (!e.target.classList.contains('key--special')) {
                         this.area.value += e.target.innerHTML;
                     }
-
-                    console.log();
-
+                    
                     this.backspaceClickHandler(e);
                     this.deleteClickHandler(e);
                     this.enterClickHandler(e);
@@ -65,6 +68,15 @@
             });
         }
 
+        languageSwitch(e) {
+            console.log(e.altKey);
+            if((e.key === 'Control' && !!e.altKey) || (e.key === 'Alt' && !!e.ctrlKey))
+            {
+                console.log('language switch!....')
+                this.changeKeyboardLang(this.lang === 'eng' ?  this.rusKeys : this.engKeys );
+            }
+        }
+
         tabClickHandler(e) {
             if (e.target.getAttribute('data') === 'Tab') {
                 this.area.setRangeText('    ', this.area.selectionStart, this.area.selectionEnd, 'end');
@@ -72,7 +84,6 @@
         }
 
         backspaceClickHandler(e) {
-            console.log(e.target.getAttribute('data') === 'Backspace');
             if (e.target.getAttribute('data') === 'Backspace') {
                 if (this.area.value.length === 0) {
                     return;
@@ -188,6 +199,7 @@
             this.area = document.createElement('textarea');
             this.area.setAttribute('id', 'area');
             this.area.setAttribute('name', 'area');
+            this.area.setAttribute('placeholder', 'ааааа не успеваю "( я доделаю точно, перепроверте чуть позже плиз, если что tg @nextstopmars');
             container.appendChild(this.area);
         }
 
@@ -196,7 +208,7 @@
             keyboard.classList.add('keyboard');
 
                 this.engKeys.forEach((row, i)=> {
-                    let fragmentRow = '<div class="row">';
+                    let fragmentRow = `<div class="row row${i}">`;
                         row.forEach((key, j)=> {
                             let fragmentKey = '';
                             fragmentKey += this.renderKeyboardKey(key, this.keyCodes[i][j]);
@@ -212,6 +224,24 @@
        renderKeyboardKey(key, data) {
             return `<span class="key" data="${data}">${key}</span>`;
         }
+
+        changeKeyboardLang(layoutArray) {
+            console.log(layoutArray);
+            const keyElementsArray = this.getKeyElementsArray();
+            layoutArray.forEach((row, i, arr) => {
+                row.forEach((key, j) => {
+                   keyElementsArray[i][j].innerText = key;
+                });
+            });
+            console.log(keyElementsArray);
+            this.lang === 'eng' ?  this.lang = 'rus' : this.lang = 'eng';
+        }
+        preventSystemLangChange(e) {
+            console.log('prevent goes ...')
+            if((e.key === 'Shift' && !!e.altKey) || (e.key === 'Alt' && !!e.shiftKey)) {
+                e.preventDefault();
+            }
+        }
         addExtraKeyClasses() {
             document.querySelectorAll('.key').forEach((key,i,arr) => {
                 if (key.innerText === 'Backspace' || key.innerText === 'Enter' || key.innerText === '') key.classList.add('key--wide');
@@ -221,7 +251,18 @@
                 }
             });
         }
-       
+        
+        getKeyElementsArray() {
+            let arrayKeyElements = [];
+            document.querySelectorAll('.row').forEach(row => {
+                let rowArray = [];
+                [...row.children].forEach(key => {
+                    rowArray.push(key);
+                });
+                arrayKeyElements.push(rowArray);
+            });
+            return arrayKeyElements;
+        }
     }
     
     document.addEventListener('DOMContentLoaded', (e) => {

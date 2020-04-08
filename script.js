@@ -37,7 +37,7 @@
                     this.indicator = false;
                 }
             } else {
-                area.focus();
+                this.area.focus();
                 if(e.code === 'Tab') {
                     e.preventDefault();
                     this.area.setRangeText('    ', this.area.selectionStart, this.area.selectionEnd, 'end');
@@ -71,7 +71,7 @@
                     e.target.classList.add('key--press');                   
                 }
             });
-            document.querySelector('.keyboard').addEventListener('mouseup', (e) => {
+            document.querySelector('.keyboard').addEventListener('mouseup', () => {
                 
                 document.querySelectorAll('.key').forEach(key => 
                     key.classList.contains('key--press') ? key.classList.remove('key--press') : null);
@@ -150,7 +150,7 @@
                 if (this.area.selectionStart === this.area.selectionEnd) {
                     this.area.setRangeText('', this.area.selectionStart, this.area.selectionEnd + 1, 'end');
                 } else if (this.area.selectionStart !== this.area.selectionEnd) {
-                    this.area.setRangeText('', inputthis.areaKeyboard.selectionStart, this.area.selectionEnd, 'end');
+                    this.area.setRangeText('', this.area.selectionStart, this.area.selectionEnd, 'end');
                 }
             }
         }
@@ -163,6 +163,11 @@
         arrowClickHandler(e) {
             const keyData = e.target.getAttribute('data');
             this.cursorPosition = this.area.selectionStart;
+            let selectionInRow = this.area.selectionStart;
+            const rowsArea = this.area.value.split('\n');
+            let positionInRow = this.area.selectionStart;
+            const rows = this.area.value.split('\n');
+            let i = 0;
             if (keyData.includes('Arrow')) {
             switch (keyData) {
                 case 'ArrowLeft':
@@ -174,8 +179,7 @@
                     this.area.selectionEnd = this.area.selectionStart;
                     break;
                 case 'ArrowUp':
-                    let selectionInRow = this.area.selectionStart;
-                    const rowsArea = this.area.value.split('\n');
+                    
                     if (this.area.selectionStart > rowsArea[0].length) {
                       let i = 0;
                       while (selectionInRow > rowsArea[i].length) {
@@ -194,10 +198,7 @@
                       this.area.selectionEnd = this.area.selectionStart;
                     }
                     break;
-                case 'ArrowDown':
-                    let positionInRow = this.area.selectionStart;
-                    const rows = this.area.value.split('\n');
-                    let i = 0;
+                case 'ArrowDown':  
                     while (positionInRow > rows[i].length) {
                       positionInRow -= (rows[i].length + 1);
                       i += 1;
@@ -299,7 +300,7 @@
 
         changeKeyboardLang(layoutArray) {
             const keyElementsArray = this.getKeyElementsArray();
-            layoutArray.forEach((row, i, arr) => {
+            layoutArray.forEach((row, i) => {
                 row.forEach((key, j) => {
                    keyElementsArray[i][j].innerText = key;
                 });
@@ -344,7 +345,7 @@
         }
     }
     
-    document.addEventListener('DOMContentLoaded', (e) => {
+    document.addEventListener('DOMContentLoaded', () => {
         const keyboard = new Keyboard();
         keyboard.init();
         //Костыль чтобы определить какая раскладка в системe

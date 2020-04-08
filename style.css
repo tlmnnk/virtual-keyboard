@@ -66,6 +66,10 @@ body {
 .key--shift {
     width: 140px;
 }
+.key--special {
+    background-color: #31312c;
+    border: 1px solid black;
+}
 .key--press {
     -webkit-box-shadow: inset 0px 0px 10px 2px rgb(158, 158, 158);
     -moz-box-shadow: inset 0px 0px 10px 2px rgb(158, 158, 158);
